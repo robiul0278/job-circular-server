@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
-import { IRegisterUser } from './auth.interface';
+import { IRegister } from './auth.interface';
 import bcrypt from "bcrypt";
 import config from '../../../config';
 
-const UserSchema = new Schema<IRegisterUser>({
+const AuthSchema = new Schema<IRegister>({
     name: {
         type: String,
         required: true,
@@ -25,13 +25,10 @@ const UserSchema = new Schema<IRegisterUser>({
         enum: ["user", "admin"],
         default: "user"
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+bookmark: [{ type: Schema.Types.ObjectId, ref: "Job" }]
 });
 
-UserSchema.pre('save', async function (next) {
+AuthSchema.pre('save', async function (next) {
     const user = this;
     user.password = await bcrypt.hash(
         user.password,
@@ -40,9 +37,9 @@ UserSchema.pre('save', async function (next) {
     )
     next();
 });
-UserSchema.post('save', function (doc, next) {
+AuthSchema.post('save', function (doc, next) {
     doc.password = ''
     next();
 });
 
-export const userModel = model<IRegisterUser>("User", UserSchema);
+export const authModel = model<IRegister>("User", AuthSchema);

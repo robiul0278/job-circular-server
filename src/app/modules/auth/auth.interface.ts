@@ -1,20 +1,24 @@
 import { USER_ROLE } from "./auth.constant";
 
-export type IRegisterUser = {
-    name: string;
-    password: string;
+export type IBookmark = {
+  jobId: string;
+};
+
+export type IRegister = {
+  name: string;
+  password: string;
+  email: string;
+  role: "user" | "admin";
+  bookmark: IBookmark[];
+};
+
+export type ILogin = {
     email: string;
-    role?: "user" | "admin";
-    createdAt?: Date;
-}
-export type ILoginUser = {
-    email: string;
     password: string;
-    role?: "user" | "admin";
 }
 
 export type IResetPassword = {
-       email: string;
+    email: string;
     newPassword: string;
 }
 

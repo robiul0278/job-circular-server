@@ -16,6 +16,7 @@ const registerUser = catchAsync(async (req, res) => {
         data: other,
     })
 })
+
 const loginUser = catchAsync(async (req, res) => {
     const result = await authServices.loginDB(req.body);
     const {refreshToken, ...token} = result;

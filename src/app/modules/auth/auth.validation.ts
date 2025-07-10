@@ -5,11 +5,6 @@ export const registerValidationSchema = z.object({
     name: z.string().min(1, { message: "নাম দেওয়া আবশ্যক!" }),
     password: z.string().min(6, { message: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!" }),
     email: z.string().email({ message: "সঠিক ইমেইল দিন!" }),
-    photoURL: z.string().url({ message: "ছবির জন্য একটি সঠিক লিংক দিন" }).optional(),
-    role: z.enum(["user", "admin"], {
-      errorMap: () => ({ message: "ভূমিকা অবশ্যই 'user' অথবা 'admin' হতে হবে" }),
-    }).default("user"),
-    createdAt: z.date({ required_error: "তারিখ দেওয়া আবশ্যক" }).optional(),
   }),
 });
 
@@ -21,7 +16,6 @@ export const loginValidationSchema = z.object({
     role: z.enum(["user", "admin"], {
       errorMap: () => ({ message: "ভূমিকা অবশ্যই 'user' অথবা 'admin' হতে হবে" }),
     }).default("user"),
-    createdAt: z.date({ required_error: "তারিখ দেওয়া আবশ্যক" }).optional(),
   }),
 });
 
