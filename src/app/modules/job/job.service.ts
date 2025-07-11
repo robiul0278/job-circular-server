@@ -52,11 +52,10 @@ const updateJobViewsDB = async (id: string) => {
 };
 
 const deleteJobDB = async (jobId: string) => {
-    const result = await jobModel.deleteOne({ jobId });
+    console.log(jobId);
+    const result = await jobModel.findByIdAndDelete(jobId);
     return result;
 }
-
-
 
 export const jobServices = {
     createJobDB,
