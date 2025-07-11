@@ -6,7 +6,7 @@ export const jobValidationSchema = z.object({
     jobTitle: z.string().min(1, "Job title is required"),
     companyName: z.string().min(1, "Company name is required"),
     image: z.string().url("Invalid image URL"),
-    education: z.array(z.string().min(1)).min(1, "At least one education field is required"),
+    technology: z.array(z.string().min(1)).min(1, "At least one technology field is required"),
     description: z.string().min(10, "Job description is too short"),
     vacancy: z.number().int().positive("Vacancy must be a positive number"),
     views: z.number().nonnegative().optional(),

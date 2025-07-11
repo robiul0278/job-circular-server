@@ -8,7 +8,7 @@ const createJobDB = async (payload: IJobPost) => {
 }
 
 const getAllJobDB = async (query: Record<string, unknown>) => {
-    const searchableField = ['companyName', 'jobTitle']
+    const searchableField = ['companyName', 'jobTitle', 'technology']
 
     const jobQuery = new QueryBuilder(
         jobModel.find(), query)
@@ -21,29 +21,38 @@ const getAllJobDB = async (query: Record<string, unknown>) => {
     const result = await jobQuery.modelQuery;
     const meta = await jobQuery.countTotal();
 
-    return{
+    // ✅ Extra: Count posts per technology
+    const technologyCount = await jobModel.aggregate([
+        { $unwind: "$technology" }, // because it's an array
+        { $group: { _id: "$technology", count: { $sum: 1 } } },
+        { $project: { technology: "$_id", count: 1, _id: 0 } },
+        { $sort: { count: -1 } }
+    ]);
+
+    return {
         meta,
-        result
+        result,
+        technologyCount,
     }
 }
 
 const singleJobDB = async (jobId: string) => {
-    const result = await jobModel.findOne({jobId});
+    const result = await jobModel.findOne({ jobId });
     return result;
 }
 
 
 const updateJobViewsDB = async (id: string) => {
-  const result = await jobModel.findOneAndUpdate(
-    { jobId: id },
-    { $inc: { views: 1 } },
-    { new: true }
-  );
-  return result;
+    const result = await jobModel.findOneAndUpdate(
+        { jobId: id },
+        { $inc: { views: 1 } },
+        { new: true }
+    );
+    return result;
 };
 
 const deleteJobDB = async (jobId: string) => {
-    const result = await jobModel.deleteOne({jobId});
+    const result = await jobModel.deleteOne({ jobId });
     return result;
 }
 

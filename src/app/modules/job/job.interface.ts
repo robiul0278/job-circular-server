@@ -3,7 +3,7 @@ export type IJobPost = {
   jobTitle: string;
   companyName: string;
   image?: string;
-  education: string[];
+  technology: string[];
   description: string;
   vacancy: number;
   views: number;

@@ -7,7 +7,7 @@ const JobPostSchema = new Schema<IJobPost>(
     jobTitle: { type: String, required: true },
     companyName: { type: String, required: true },
     image: { type: String, required: true },
-    education: { type: [String], required: true },
+    technology: { type: [String], required: true },
     description: { type: String, required: true },
     vacancy: { type: Number, required: true },
     views: { type: Number, default: 0 },

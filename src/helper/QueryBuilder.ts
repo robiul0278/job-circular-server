@@ -34,15 +34,13 @@ class QueryBuilder<T> {
     excludeFields.forEach((el) => delete queryObj[el]);
 
     // Remove empty or undefined filters
-    ['status', 'category','subCategory','brand', 'tags' ].forEach(field => {
+    ['category','tags' ].forEach(field => {
       if (!queryObj[field]) delete queryObj[field];
     });
 
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
-
     return this;
   }
-
 
   sort() {
     const sort =
