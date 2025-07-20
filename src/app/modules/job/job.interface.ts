@@ -1,14 +1,19 @@
-export type IJobPost = {
-  jobId: string;
-  jobTitle: string;
+export type Categories = "government" | "private" | "news" | "suggestion";
+
+
+export type TJobPost = {
+  slug: string;
+  title: string;
   companyName: string;
-  image?: string;
-  technology: string[];
-  description: string;
+  banner: string;
+  images: string[];
   vacancy: number;
-  views: number;
+  websiteLink: string;
   published: string;
-  startApply: string;
+  applyStart: string;
   deadline: string;
-  applyLink: string;
+  technology: string[];
+  categories: Categories;
+  description: string;
+  views: number; //default
 }

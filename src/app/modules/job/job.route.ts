@@ -8,7 +8,7 @@ import { USER_ROLE } from "../auth/auth.constant";
 const router = express.Router();
 
 // call controller function 
-router.post('/create',
+router.post('/post-circular',
     validateRequest(jobValidationSchema),
     jobController.createJob
 );
@@ -18,13 +18,13 @@ router.get('/',
     jobController.getAllJob
 );
 
-router.get('/:id',
+router.get('/single/:slug',
     // authGard(USER_ROLE.user),
     jobController.getSingleJob
 );
 router.post('/views/:id',
     // authGard(USER_ROLE.user),
-    jobController.updateJobView
+    jobController.updateViews
 );
 router.delete('/delete/:id',
     // authGard(USER_ROLE.user),

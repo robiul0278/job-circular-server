@@ -23,7 +23,7 @@ const userSchema = new Schema<IUser>({
         enum: ["user", "admin"],
         default: "user"
     },
-bookmark: [{ type: Schema.Types.ObjectId, ref: "Job" }]
+bookmark: [{ type: Schema.Types.ObjectId, ref: "Circular" }]
 
 });
 

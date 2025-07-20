@@ -4,8 +4,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import catchAsync from "../../shared/catchAsync";
 import AppError from "../errors/AppError";
-import { userModel } from "../modules/auth/auth.model";
 import { TUserRole } from "../modules/auth/auth.interface";
+import { authModel } from "../modules/auth/auth.model";
 
 const authGard = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +21,7 @@ const authGard = (...requiredRoles: TUserRole[]) => {
     const { role, _id } = decoded;
 
     //! checking if the user is exist
-    const user = await userModel.findById({_id});
+    const user = await authModel.findById({_id});
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
     }

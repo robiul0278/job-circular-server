@@ -12,7 +12,9 @@ app.use(express.json());
 app.use(cookieParser())
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // ✅ must be a specific origin, not '*'
+  origin: '*', // ✅ must be a specific origin, not '*'
+  //origin: 'http://localhost:3000', // ✅ must be a specific origin, not '*'
+  //origin: 'https://diplomajobsbd.netlify.app', // ✅ must be a specific origin, not '*'
   credentials: true,               // ✅ allow cookies to be sent
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],

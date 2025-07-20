@@ -25,7 +25,7 @@ const AuthSchema = new Schema<IRegister>({
         enum: ["user", "admin"],
         default: "user"
     },
-bookmark: [{ type: Schema.Types.ObjectId, ref: "Job" }]
+bookmark: [{ type: Schema.Types.ObjectId, ref: "Circular" }]
 });
 
 AuthSchema.pre('save', async function (next) {

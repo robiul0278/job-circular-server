@@ -5,7 +5,8 @@ import httpStatus from "http-status";
 
 const getBookmark = catchAsync(async (req, res) => {
 
-    const {userId} = req.params
+    const {userId} = req.params;
+
     const result = await userServices.getBookmarkDB(userId);
 
     sendResponse(res, {

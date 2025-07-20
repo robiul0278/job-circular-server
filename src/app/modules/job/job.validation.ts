@@ -2,17 +2,31 @@ import { z } from 'zod';
 
 export const jobValidationSchema = z.object({
   body: z.object({
-    jobId: z.string().min(1, "Job ID is required"),
-    jobTitle: z.string().min(1, "Job title is required"),
-    companyName: z.string().min(1, "Company name is required"),
-    image: z.string().url("Invalid image URL"),
-    technology: z.array(z.string().min(1)).min(1, "At least one technology field is required"),
-    description: z.string().min(10, "Job description is too short"),
-    vacancy: z.number().int().positive("Vacancy must be a positive number"),
-    views: z.number().nonnegative().optional(),
-    published: z.string().min(1, "Published date is required"),
-    startApply: z.string().min(1, "Start apply date is required"),
-    deadline: z.string().min(1, "Deadline is required"),
-    applyLink: z.string().url("Invalid apply link URL")
+    slug: z.string().optional(),
+    title: z.string().min(1, "পদের শিরোনাম আবশ্যক!"),
+    companyName: z.string().min(1, "প্রতিষ্ঠানের নাম আবশ্যক!"),
+    banner: z.string().url({ message: " সঠিক ছবি প্রদান করুন!" }),
+    images: z.array(z.string().url({ message: "সঠিক ছবি প্রদান করুন!" })),
+    vacancy: z.coerce.number().min(1, "শূন্যপদের সংখ্যা আবশ্যক!"),
+    websiteLink: z.string().url("আবেদন লিঙ্কটি সঠিক URL হতে হবে!"),
+    published: z.string({
+      required_error: "প্রকাশের তারিখ আবশ্যক!",
+    }).min(1, "প্রকাশের তারিখ আবশ্যক!"),
+
+    applyStart: z.string({
+      required_error: "আবেদনের শুরুর তারিখ আবশ্যক!",
+    }).min(1, "আবেদনের শুরুর তারিখ আবশ্যক!"),
+
+    deadline: z.string({
+      required_error: "আবেদনের শেষ তারিখ আবশ্যক!",
+    }).min(1, "আবেদনের শেষ তারিখ আবশ্যক!"),
+
+    categories: z.enum(["government", "private", "autonomous"], {
+      required_error: "একটি ক্যাটাগরি নির্বাচন করুন!"
+    }),
+    technology: z
+      .array(z.string().min(1))
+      .min(1, "অন্তত একটি প্রযুক্তি উল্লেখ করতে হবে!"),
+    description: z.string().min(10, "চাকরির বিবরণ খুব ছোট হয়েছে!"),
   })
 });

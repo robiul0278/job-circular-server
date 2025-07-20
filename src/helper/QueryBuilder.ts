@@ -34,7 +34,7 @@ class QueryBuilder<T> {
     excludeFields.forEach((el) => delete queryObj[el]);
 
     // Remove empty or undefined filters
-    ['category','tags' ].forEach(field => {
+    ['tags','categories', 'technology' ].forEach(field => {
       if (!queryObj[field]) delete queryObj[field];
     });
 

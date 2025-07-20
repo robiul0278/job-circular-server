@@ -1,14 +1,14 @@
 import QueryBuilder from "../../../helper/QueryBuilder";
-import { IJobPost } from "./job.interface";
+import { TJobPost } from "./job.interface";
 import { jobModel } from "./job.model";
 
-const createJobDB = async (payload: IJobPost) => {
+const createJobDB = async (payload: TJobPost) => {
     const result = await jobModel.create(payload);
     return result;
 }
 
 const getAllJobDB = async (query: Record<string, unknown>) => {
-    const searchableField = ['companyName', 'jobTitle', 'technology']
+    const searchableField = ['companyName', 'title', 'technology']
 
     const jobQuery = new QueryBuilder(
         jobModel.find(), query)
@@ -29,22 +29,43 @@ const getAllJobDB = async (query: Record<string, unknown>) => {
         { $sort: { count: -1 } }
     ]);
 
+    // ✅ Extra: Count posts per category
+    const categoryCount = await jobModel.aggregate([
+        {
+            $group: {
+                _id: "$categories", // group by 'categories' field
+                count: { $sum: 1 },
+            },
+        },
+        {
+            $project: {
+                category: "$_id",
+                count: 1,
+                _id: 0,
+            },
+        },
+        {
+            $sort: { count: -1 },
+        },
+    ]);
+
     return {
         meta,
         result,
+        categoryCount,
         technologyCount,
     }
 }
 
-const singleJobDB = async (jobId: string) => {
-    const result = await jobModel.findOne({ jobId });
+const singleJobDB = async (slug: string) => {
+    const result = await jobModel.findOne({ slug });
     return result;
 }
 
 
-const updateJobViewsDB = async (id: string) => {
-    const result = await jobModel.findOneAndUpdate(
-        { jobId: id },
+const updateViewsDB = async (id: string) => {
+    const result = await jobModel.findByIdAndUpdate(
+         id ,
         { $inc: { views: 1 } },
         { new: true }
     );
@@ -52,7 +73,6 @@ const updateJobViewsDB = async (id: string) => {
 };
 
 const deleteJobDB = async (jobId: string) => {
-    console.log(jobId);
     const result = await jobModel.findByIdAndDelete(jobId);
     return result;
 }
@@ -61,6 +81,6 @@ export const jobServices = {
     createJobDB,
     getAllJobDB,
     singleJobDB,
-    updateJobViewsDB,
+    updateViewsDB,
     deleteJobDB
 }
