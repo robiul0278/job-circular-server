@@ -14,21 +14,25 @@ router.post('/post-circular',
 );
 
 router.get('/',
-    // authGard(USER_ROLE.user),
     jobController.getAllJob
+);
+router.get('/categories',
+    jobController.getJobCategory
 );
 
 router.get('/single/:slug',
-    // authGard(USER_ROLE.user),
     jobController.getSingleJob
 );
 router.post('/views/:id',
-    // authGard(USER_ROLE.user),
     jobController.updateViews
 );
 router.delete('/delete/:id',
     // authGard(USER_ROLE.user),
     jobController.deleteJob
+);
+router.get('/analytics',
+    // authGard(USER_ROLE.user),
+    jobController.analytics
 );
 
 export const jobRoutes = router;

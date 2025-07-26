@@ -6,8 +6,6 @@ import { jobServices } from "./job.service";
 const createJob = catchAsync(async (req, res) => {
     const result = await jobServices.createJobDB(req.body);
 
-    // console.log(req.body);
-
     // send response 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -17,8 +15,6 @@ const createJob = catchAsync(async (req, res) => {
     })
 })
 const getAllJob = catchAsync(async (req, res) => {
-    // console.log("USER", req.user);
-    // console.log("TOKEN", req.cookies);
     const query = req.query;
     const result = await jobServices.getAllJobDB(query);
 
@@ -29,6 +25,18 @@ const getAllJob = catchAsync(async (req, res) => {
         data: result,
     })
 })
+
+const getJobCategory = catchAsync(async (req, res) => {
+    const result = await jobServices.getJobCategoryDB();
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Get all job categories successful!",
+        data: result,
+    })
+})
+
 const getSingleJob = catchAsync(async (req, res) => {
     const {slug} = req.params;
 
@@ -63,11 +71,23 @@ const deleteJob = catchAsync(async (req, res) => {
         data: result,
     })
 })
+const analytics = catchAsync(async (req, res) => {
+
+    const result = await jobServices.analyticsDB();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Dashboard analytics get successfully!",
+        data: result,
+    })
+})
 
 export const jobController = {
     createJob,
     getAllJob,
+    getJobCategory,
     getSingleJob,
     updateViews,
     deleteJob,
+    analytics,
 }

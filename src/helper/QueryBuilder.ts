@@ -34,7 +34,7 @@ class QueryBuilder<T> {
     excludeFields.forEach((el) => delete queryObj[el]);
 
     // Remove empty or undefined filters
-    ['tags','categories', 'technology' ].forEach(field => {
+    ['categories', 'technology' ].forEach(field => {
       if (!queryObj[field]) delete queryObj[field];
     });
 
@@ -60,13 +60,17 @@ class QueryBuilder<T> {
     return this;
   }
 
-  fields() {
-    const fields =
-      (this?.query?.fields as string)?.split(',')?.join(' ') || '-__v';
+fields(defaultFields?: string) {
+  const queryFields = this.query?.fields as string | undefined;
 
-    this.modelQuery = this.modelQuery.select(fields);
-    return this;
-  }
+  const fields = queryFields
+    ? queryFields.split(',').join(' ')
+    : defaultFields ?? '-__v';
+
+  this.modelQuery = this.modelQuery.select(fields);
+  return this;
+}
+
   async countTotal() {
     const totalQueries = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(totalQueries);
