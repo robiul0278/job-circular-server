@@ -1,4 +1,4 @@
-export type Categories = "government" | "private" | "news" | "suggestion";
+export type Categories = "government" | "private" | "autonomous";
 
 
 export type TJobPost = {
@@ -7,13 +7,10 @@ export type TJobPost = {
   companyName: string;
   banner: string;
   images: string[];
-  vacancy: number;
-  websiteLink: string;
-  published: string;
-  applyStart: string;
+  vacancy: string;
   deadline: string;
-  technology: string[];
   categories: Categories;
+  departments: string[];
   description: string;
-  views: number; //default
+  views: number;
 }

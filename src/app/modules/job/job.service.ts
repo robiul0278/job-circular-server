@@ -7,9 +7,20 @@ const createJobDB = async (payload: TJobPost) => {
   return result;
 }
 
+const updateJobDB = async (id: string, payload: TJobPost) => {
+
+const result = await jobModel.findByIdAndUpdate(
+  id,
+  { $set: payload },
+  { new: true }
+);
+
+  return result;
+}
+
 const getAllJobDB = async (query: Record<string, unknown>) => {
   const searchableField = ['companyName', 'title', 'categories']
-  const Select = '-description -images -websiteLink -published -applyStart -technology -updatedAt -__v'
+  const Select = '-description -images -updatedAt -__v'
 
   const jobQuery = new QueryBuilder(
     jobModel.find(), query)
@@ -29,14 +40,6 @@ const getAllJobDB = async (query: Record<string, unknown>) => {
 }
 
 const getJobCategoryDB = async () => {
-  // ✅ Extra: Count posts per technology
-  const technology = await jobModel.aggregate([
-    { $unwind: "$technology" }, // because it's an array
-    { $group: { _id: "$technology", count: { $sum: 1 } } },
-    { $project: { technology: "$_id", count: 1, _id: 0 } },
-    { $sort: { count: -1 } }
-  ]);
-
   // ✅ Extra: Count posts per category
   const category = await jobModel.aggregate([
     {
@@ -57,8 +60,7 @@ const getJobCategoryDB = async () => {
     },
   ]);
   return {
-    category,
-    technology
+    category
   }
 }
 
@@ -84,36 +86,21 @@ const deleteJobDB = async (jobId: string) => {
 
 
 const analyticsDB = async () => {
-  const today = new Date();
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(today.getDate() - 6);
-
   const [
     totalCirculars,
-    ongoingCirculars,
-    nearDeadlineCirculars,
-    totalViews,
+    totalViewsAgg,
     monthlyTrend,
     categoryWiseCount,
-    weeklyTrend
   ] = await Promise.all([
+    // 1. Total circular count
     jobModel.countDocuments(),
 
-    jobModel.countDocuments({
-      deadline: { $gt: today.toISOString().split('T')[0] },
-    }),
-
-    jobModel.countDocuments({
-      deadline: {
-        $gte: today.toISOString().split('T')[0],
-        $lte: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      },
-    }),
-
+    // 2. Total views aggregated
     jobModel.aggregate([
       { $group: { _id: null, totalViews: { $sum: "$views" } } }
     ]),
 
+    // 3. Monthly trend
     jobModel.aggregate([
       {
         $group: {
@@ -124,6 +111,7 @@ const analyticsDB = async () => {
       { $sort: { _id: 1 } },
     ]),
 
+    // 4. Category-wise circular count
     jobModel.aggregate([
       {
         $group: {
@@ -132,39 +120,21 @@ const analyticsDB = async () => {
         },
       },
     ]),
-
-    jobModel.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: sevenDaysAgo },
-        },
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
-          },
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]),
   ]);
 
   return {
     totalCirculars,
-    ongoingCirculars,
-    nearDeadlineCirculars,
-    totalViews: totalViews[0]?.totalViews || 0,
+    totalViews: totalViewsAgg[0]?.totalViews || 0,
     monthlyTrend,
     categoryWiseCount,
-    weeklyTrend,
   };
 };
 
 
+
 export const jobServices = {
   createJobDB,
+  updateJobDB,
   getAllJobDB,
   getJobCategoryDB,
   singleJobDB,

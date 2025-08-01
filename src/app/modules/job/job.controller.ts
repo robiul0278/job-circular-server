@@ -6,11 +6,22 @@ import { jobServices } from "./job.service";
 const createJob = catchAsync(async (req, res) => {
     const result = await jobServices.createJobDB(req.body);
 
-    // send response 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: "Job create successfully!",
+        data: result,
+    })
+})
+const updateJob = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+    const result = await jobServices.updateJobDB(id, data);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Job updated successfully!",
         data: result,
     })
 })
@@ -38,7 +49,7 @@ const getJobCategory = catchAsync(async (req, res) => {
 })
 
 const getSingleJob = catchAsync(async (req, res) => {
-    const {slug} = req.params;
+    const { slug } = req.params;
 
     const result = await jobServices.singleJobDB(slug);
 
@@ -50,7 +61,7 @@ const getSingleJob = catchAsync(async (req, res) => {
     })
 })
 const updateViews = catchAsync(async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     const result = await jobServices.updateViewsDB(id);
     sendResponse(res, {
@@ -61,7 +72,7 @@ const updateViews = catchAsync(async (req, res) => {
     })
 })
 const deleteJob = catchAsync(async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     const result = await jobServices.deleteJobDB(id);
     sendResponse(res, {
@@ -84,6 +95,7 @@ const analytics = catchAsync(async (req, res) => {
 
 export const jobController = {
     createJob,
+    updateJob,
     getAllJob,
     getJobCategory,
     getSingleJob,

@@ -13,6 +13,9 @@ router.post('/post-circular',
     jobController.createJob
 );
 
+router.patch('/update/:id',
+    jobController.updateJob,
+);
 router.get('/',
     jobController.getAllJob
 );
