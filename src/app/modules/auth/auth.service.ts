@@ -25,7 +25,7 @@ const loginDB = async (payload: ILogin) => {
         throw new AppError(httpStatus.BAD_REQUEST, "পাসওয়ার্ড সঠিক নয়!", "password");
     }
 
-    const { password,bookmark, __v, ...userWithoutSensitive } = User.toObject();
+    const { password, bookmark, __v, ...userWithoutSensitive } = User.toObject();
 
     // create accessToken 
     const jwtPayload = {
@@ -88,7 +88,7 @@ const forgetPassword = async (email: string) => {
     const isUserExists = await authModel.findOne({ email });
 
     if (!isUserExists) {
-        throw new AppError(httpStatus.NOT_FOUND, "This email is not found!");
+        throw new AppError(httpStatus.NOT_FOUND, "এই ইমেইলটি সঠিক নয়!", "email");
     }
 
     // create accessToken 
@@ -103,39 +103,44 @@ const forgetPassword = async (email: string) => {
         { expiresIn: '10m' }
     );
 
-    const resetUILink = `${config.reset_password_ui_link}/api/v1/auth/reset-password?email=${isUserExists.email}&token=${resetToken}`
+    const resetUILink = `${config.reset_password_ui_link}/reset-password?email=${isUserExists.email}&token=${resetToken}`
 
     sendEmail(isUserExists?.email, resetUILink)
-
 }
 
 const resetPassword = async (payload: IResetPassword, token: string) => {
     const { email, newPassword } = payload;
 
-    const decoded = jwt.verify(token, config.jwt_secret_token as string) as JwtPayload;
+    // JWT verify
+    try {
+        const decoded = jwt.verify(token, config.jwt_secret_token as string) as JwtPayload;
 
-    if (!decoded) {
-        throw new AppError(httpStatus.UNAUTHORIZED, "Invalid or expired token.");
+        const user = await authModel.findById(decoded.userId);
+
+        if (!user || user.email !== email) {
+            throw new AppError(httpStatus.NOT_FOUND, "User not found with this email!", "email");
+        }
+
+        const hashedPassword = await bcrypt.hash(
+            newPassword,
+            Number(config.bcrypt_salt_rounds)
+        );
+
+        await authModel.findByIdAndUpdate(decoded.userId, {
+            password: hashedPassword,
+        });
+    } catch (error: any) {
+        if (error.name === "TokenExpiredError") {
+            throw new AppError(httpStatus.UNAUTHORIZED, "Token has expired. Please request a new one.", "token");
+        } else if (error.name === "JsonWebTokenError") {
+            throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token provided.", "token");
+        } else {
+            throw new AppError(httpStatus.UNAUTHORIZED, "Token verification failed.", "token");
+        }
     }
-
-    const user = await authModel.findById(decoded.userId);
-
-    if (!user || user.email !== email) {
-        throw new AppError(httpStatus.NOT_FOUND, "User not found with this email!");
-    }
-
-    const hashedPassword = await bcrypt.hash(
-        newPassword,
-        Number(config.bcrypt_salt_rounds)
-    );
-
-    await authModel.findByIdAndUpdate(
-        decoded.userId,
-        { password: hashedPassword },
-        // { new: true } // return updated user
-    );
 
 };
+
 
 export const authServices = {
     registerDB,

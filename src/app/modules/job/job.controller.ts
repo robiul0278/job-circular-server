@@ -37,17 +37,6 @@ const getAllJob = catchAsync(async (req, res) => {
     })
 })
 
-const getJobCategory = catchAsync(async (req, res) => {
-    const result = await jobServices.getJobCategoryDB();
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Get all job categories successful!",
-        data: result,
-    })
-})
-
 const getSingleJob = catchAsync(async (req, res) => {
     const { slug } = req.params;
 
@@ -97,7 +86,6 @@ export const jobController = {
     createJob,
     updateJob,
     getAllJob,
-    getJobCategory,
     getSingleJob,
     updateViews,
     deleteJob,

@@ -21,5 +21,9 @@ export default {
   jwt_refresh_expiration: process.env.JWT_REFRESH_EXPIRATION,
 
   // RESET PASSWORD 
-  reset_password_ui_link: process.env.RESET_PASSWORD_UI_LINK 
+  reset_password_ui_link: process.env.RESET_PASSWORD_UI_LINK,
+
+  // SMTP
+  smtp_user: process.env.SMTP_USER,
+  smtp_pass: process.env.SMTP_PASS,
 };

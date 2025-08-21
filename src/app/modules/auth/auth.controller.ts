@@ -47,12 +47,13 @@ const refreshToken = catchAsync(async (req, res) => {
 })
 const forgetPassword = catchAsync(async (req, res) => {
     const {email} = req.body;
+
     const result = await authServices.forgetPassword(email);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Reset link generated successfully!",
+        message: "ইমেইলে Reset লিংক পাঠানো হয়েছে !",
         data: result,
     })
 })
@@ -60,6 +61,7 @@ const forgetPassword = catchAsync(async (req, res) => {
 const resetPassword = catchAsync(async (req, res) => {
     const data = req.body;
     const token = req.headers.authorization as string;
+
     const result = await authServices.resetPassword(data, token);
 
     sendResponse(res, {
@@ -69,7 +71,6 @@ const resetPassword = catchAsync(async (req, res) => {
         data: result,
     })
 })
-
 
 export const authController = {
     registerUser,

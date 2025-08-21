@@ -8,21 +8,16 @@ import { USER_ROLE } from "../auth/auth.constant";
 const router = express.Router();
 
 // call controller function 
+router.get('/',
+    jobController.getAllJob
+);
 router.post('/post-circular',
     validateRequest(jobValidationSchema),
     jobController.createJob
 );
-
 router.patch('/update/:id',
     jobController.updateJob,
 );
-router.get('/',
-    jobController.getAllJob
-);
-router.get('/categories',
-    jobController.getJobCategory
-);
-
 router.get('/single/:slug',
     jobController.getSingleJob
 );

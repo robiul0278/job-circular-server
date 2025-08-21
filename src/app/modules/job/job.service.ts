@@ -9,17 +9,17 @@ const createJobDB = async (payload: TJobPost) => {
 
 const updateJobDB = async (id: string, payload: TJobPost) => {
 
-const result = await jobModel.findByIdAndUpdate(
-  id,
-  { $set: payload },
-  { new: true }
-);
+  const result = await jobModel.findByIdAndUpdate(
+    id,
+    { $set: payload },
+    { new: true }
+  );
 
   return result;
 }
 
 const getAllJobDB = async (query: Record<string, unknown>) => {
-  const searchableField = ['companyName', 'title', 'categories']
+  const searchableField = ['companyName', 'title', 'departments']
   const Select = '-description -images -updatedAt -__v'
 
   const jobQuery = new QueryBuilder(
@@ -33,39 +33,23 @@ const getAllJobDB = async (query: Record<string, unknown>) => {
   const result = await jobQuery.modelQuery;
   const meta = await jobQuery.countTotal();
 
+  // Aggregate categories
+  const categories = await jobModel.aggregate([
+    { $group: { _id: "$categories", count: { $sum: 1 } } }, 
+    { $project: { category: "$_id", count: 1, _id: 0 } }, 
+    { $sort: { count: -1 } }]);
+
   return {
     meta,
+    categories,
     result,
   }
 }
 
-const getJobCategoryDB = async () => {
-  // ✅ Extra: Count posts per category
-  const category = await jobModel.aggregate([
-    {
-      $group: {
-        _id: "$categories", // group by 'categories' field
-        count: { $sum: 1 },
-      },
-    },
-    {
-      $project: {
-        category: "$_id",
-        count: 1,
-        _id: 0,
-      },
-    },
-    {
-      $sort: { count: -1 },
-    },
-  ]);
-  return {
-    category
-  }
-}
 
 const singleJobDB = async (slug: string) => {
   const result = await jobModel.findOne({ slug });
+
   return result;
 }
 
@@ -136,7 +120,6 @@ export const jobServices = {
   createJobDB,
   updateJobDB,
   getAllJobDB,
-  getJobCategoryDB,
   singleJobDB,
   updateViewsDB,
   deleteJobDB,
