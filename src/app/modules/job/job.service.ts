@@ -19,8 +19,8 @@ const updateJobDB = async (id: string, payload: TJobPost) => {
 }
 
 const getAllJobDB = async (query: Record<string, unknown>) => {
-  const searchableField = ['companyName', 'title', 'departments']
-  const Select = '-description -images -updatedAt -__v'
+  const searchableField = ['companyName', 'title']
+  const Select = '-description -images'
 
   const jobQuery = new QueryBuilder(
     jobModel.find(), query)
@@ -49,7 +49,6 @@ const getAllJobDB = async (query: Record<string, unknown>) => {
 
 const singleJobDB = async (slug: string) => {
   const result = await jobModel.findOne({ slug });
-
   return result;
 }
 
