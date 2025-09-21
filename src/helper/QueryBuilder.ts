@@ -33,7 +33,7 @@ class QueryBuilder<T> {
   }
 
   sort() {
-    const sortStr = (this.query?.sort as string)?.split(',').join(' ') || '-createdAt';
+    const sortStr = (this.query?.sort as string)?.split(',').join(' ') || '-updatedAt';
     this.modelQuery = this.modelQuery.sort(sortStr);
     return this;
   }

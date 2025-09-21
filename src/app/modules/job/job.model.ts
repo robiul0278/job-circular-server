@@ -8,8 +8,16 @@ const JobPostSchema = new Schema<TJobPost>(
     title: { type: String, required: true },
     companyName: { type: String, required: true },
     banner: { type: String, required: true },
-    images: { type: [String], required: true },
-    deadline: { type: String, required: true },
+    images: { 
+      type: [String], 
+      required: false,
+      default: [],
+    },
+    deadline: { 
+      type: String, 
+      required: false,
+         default: null
+    },
     categories: {
       type: String,
       enum: ["govt", "private"],
