@@ -35,6 +35,7 @@ const getAllJobDB = async (query: Record<string, unknown>) => {
 
   // Aggregate categories
   const categories = await jobModel.aggregate([
+    {$match: {deadline: {  $gte: new Date().toISOString() }}},
     { $group: { _id: "$categories", count: { $sum: 1 } } }, 
     { $project: { category: "$_id", count: 1, _id: 0 } }, 
     { $sort: { count: -1 } }]);

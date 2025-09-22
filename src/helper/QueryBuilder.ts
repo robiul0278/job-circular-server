@@ -27,10 +27,8 @@ class QueryBuilder<T> {
     ['categories'].forEach(field => {
       if (!queryObj[field]) delete queryObj[field];
     });
-
-    // ✅ Skip expired deadline posts
-    const now = new Date();
-    queryObj['deadline'] = { $gte: now };
+    // Ensure deadline filter works
+    queryObj['deadline'] = { $gte: new Date().toISOString() };
 
     this.modelQuery = this.modelQuery.where(queryObj);
     return this;
