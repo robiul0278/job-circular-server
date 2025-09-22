@@ -28,12 +28,16 @@ class QueryBuilder<T> {
       if (!queryObj[field]) delete queryObj[field];
     });
 
+    // ✅ Skip expired deadline posts
+    const now = new Date();
+    queryObj['deadline'] = { $gte: now };
+
     this.modelQuery = this.modelQuery.where(queryObj);
     return this;
   }
 
   sort() {
-    const sortStr = (this.query?.sort as string)?.split(',').join(' ') || '-updatedAt';
+    const sortStr = (this.query?.sort as string)?.split(',').join(' ') || '-createdAt';
     this.modelQuery = this.modelQuery.sort(sortStr);
     return this;
   }
